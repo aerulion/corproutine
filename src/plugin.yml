@@ -1,0 +1,13 @@
+name: CorpRoutine
+main: net.aerulion.corproutine.Main
+version: 1.0
+author: aerulion
+api-version: 1.15
+commands:
+     routine:
+       description: Oeffnet das Routine-Aufgaben-Menu
+permissions:
+    corproutine.use:
+          default: op
+    corproutine.alert:
+          default: op
