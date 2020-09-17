@@ -1,8 +1,8 @@
 name: CorpRoutine
 main: net.aerulion.corproutine.Main
-version: 1.0
+version: '1.1'
 author: aerulion
-api-version: 1.16
+api-version: '1.16'
 commands:
   routine:
     description: Oeffnet das Routine-Aufgaben-Menu
