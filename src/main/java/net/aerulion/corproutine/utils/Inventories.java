@@ -15,14 +15,14 @@ public class Inventories {
 
     public static Inventory MainMenu() {
         Inventory MainMenu = Bukkit.createInventory(null, 54, MainMenuName);
-        for (Routineaufgabe RA : Main.Routineaufgaben.values()) {
+        for (RoutineTask RA : Main.ROUTINE_TASKS.values()) {
             MainMenu.addItem(ItemBuilder.createRoutineItemStack(RA));
         }
         return MainMenu;
     }
 
     public static Inventory RoutineMenu(int ID) {
-        Routineaufgabe RA = Main.Routineaufgaben.get(ID);
+        RoutineTask RA = Main.ROUTINE_TASKS.get(ID);
         Inventory RoutineMenu = Bukkit.createInventory(null, 54, RoutineMenuNamePrefix + ID);
 
         ItemStack Spacer = ItemBuilder.createSpacerGlassPane();
@@ -43,8 +43,8 @@ public class Inventories {
             FaceSlot++;
         }
 
-        RoutineMenu.setItem(11, ItemBuilder.createExpireDateClock(RA.getExpireDate()));
-        RoutineMenu.setItem(13, ItemBuilder.createButtonDye(RA.getIsExpired()));
+        RoutineMenu.setItem(11, ItemBuilder.createExpireDateClock(RA.getExpiryDate()));
+        RoutineMenu.setItem(13, ItemBuilder.createButtonDye(RA.isExpired()));
         RoutineMenu.setItem(15, ItemBuilder.createCommentPaper(RA.getComment()));
         RoutineMenu.setItem(53, ItemBuilder.createMainMenuDoor());
 
@@ -52,8 +52,8 @@ public class Inventories {
     }
 
     public static Inventory EditMenu(UUID EditSessionOwner) {
-        EditSession ES = Main.EditSessions.get(EditSessionOwner);
-        Routineaufgabe RA = Main.Routineaufgaben.get(ES.getRoutineID());
+        EditSession ES = Main.EDIT_SESSIONS.get(EditSessionOwner);
+        RoutineTask RA = Main.ROUTINE_TASKS.get(ES.getRoutineID());
         Inventory EditMenu = Bukkit.createInventory(null, 54, EditMenuNamePrefix + RA.getID());
 
         EditMenu.setItem(11, ItemBuilder.createNextDateClock(Util.convertDate(ES.getNextDate())));

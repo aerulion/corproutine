@@ -9,24 +9,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Util {
-
-    public static String PluginChatPrefix = "§7[§e§lRoutine§7]§7 ";
     public final static List<Material> DyeItems = Arrays.asList(Material.INK_SAC, Material.LAPIS_LAZULI, Material.COCOA, Material.CYAN_DYE, Material.GREEN_DYE, Material.GRAY_DYE, Material.LIGHT_BLUE_DYE, Material.LIGHT_GRAY_DYE, Material.LIME_DYE, Material.MAGENTA_DYE, Material.ORANGE_DYE, Material.PINK_DYE, Material.PURPLE_DYE, Material.RED_DYE, Material.BONE_MEAL, Material.YELLOW_DYE);
 
     public static int countExpired() {
-        try {
-            loadAllData();
-        } catch (SQLException ignored) {
-        }
         int Expired = 0;
-        for (Routineaufgabe RA : Main.Routineaufgaben.values()) {
-            if (RA.getIsExpired())
+        for (RoutineTask routineTask : Main.ROUTINE_TASKS.values()) {
+            if (routineTask.isExpired())
                 Expired++;
         }
         return Expired;
@@ -84,6 +76,9 @@ public class Util {
             if (Cycle.equalsIgnoreCase("@mondaybefore_firstsundayofmonth")) {
                 return "§aMontag vor 1. Sonntag";
             }
+            if (Cycle.equalsIgnoreCase("@sunday")) {
+                return "§aSonntags";
+            }
             return "§a" + Cycle;
         }
 
@@ -106,19 +101,6 @@ public class Util {
         String wrapped = WordUtils.wrap(Comment, width, "\n", true);
         Collections.addAll(WrappedString, wrapped.split("\n"));
         return WrappedString;
-    }
-
-    public static void loadAllData() throws SQLException {
-        Main.Routineaufgaben.clear();
-        ResultSet rs = Main.MySQL.query("SELECT * FROM tool_routine");
-        while (rs.next()) {
-            Main.Routineaufgaben.put(rs.getInt(1), new Routineaufgabe(rs.getInt(1), rs.getString(4), rs.getString(3), convertDate(rs.getString(5)), rs.getString(7), rs.getString(2), convertNames(rs.getString(6))));
-        }
-    }
-
-    public static void updateData(EditSession ES) throws SQLException {
-        Routineaufgabe RA = Main.Routineaufgaben.get(ES.getRoutineID());
-        Main.MySQL.update(ES.getNextDate(), String.join(", ", ES.getDoneBy()), ES.getComment(), ES.getRoutineID(), Bukkit.getOfflinePlayer(ES.getSessionOwner()).getName(), RA.getName());
     }
 
     public static void playDoneSound(Player player) {
@@ -148,7 +130,7 @@ public class Util {
 
     public static void playAlert(Player player) {
         Bukkit.getScheduler().runTaskLater(Main.plugin, () -> {
-            player.sendMessage(Util.PluginChatPrefix + "Es sind §e§l" + Util.countExpired() + "§7 Routineaufgaben überfällig.");
+            player.sendMessage(Messages.MESSAGE_EXPIRED_TASKS.get().replaceAll("\\{COUNT}", String.valueOf(Util.countExpired())));
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 0.707F);
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 0.891F);
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1.059F);
@@ -160,14 +142,14 @@ public class Util {
         }, 105L);
     }
 
-    public static void doneMessage(Player player, String name) {
-        for (Player staffler : Bukkit.getOnlinePlayers()) {
-            if (staffler.hasPermission("corproutine.alert")) {
-                if (!staffler.getName().equalsIgnoreCase(player.getName())) {
-                    staffler.sendMessage(Util.PluginChatPrefix + "§e" + player.getName() + "§7 hat die Routineaufgabe §e" + name + " §7abgeschlossen.");
+    public static void doneMessage(Player staffler, String name) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.hasPermission(Permissions.ALERT.get())) {
+                if (!player.getName().equalsIgnoreCase(staffler.getName())) {
+                    player.sendMessage(Messages.MESSAGE_TASK_DONE.get().replaceAll("\\{PLAYER}", staffler.getName()).replaceAll("\\{TASK}", name));
                 }
             }
         }
-        player.sendMessage(Util.PluginChatPrefix + "§aDu hast die Routineaufgabe §e" + name + " §aabgeschlossen.");
+        staffler.sendMessage(Messages.MESSAGE_TASK_DONE_SELF.get().replaceAll("\\{TASK}", name));
     }
 }

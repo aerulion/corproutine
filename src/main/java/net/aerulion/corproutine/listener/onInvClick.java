@@ -3,10 +3,8 @@ package net.aerulion.corproutine.listener;
 import net.aerulion.corproutine.Main;
 import net.aerulion.corproutine.conversation.AdditionalHelperConversation;
 import net.aerulion.corproutine.conversation.CommentConversation;
-import net.aerulion.corproutine.utils.EditSession;
-import net.aerulion.corproutine.utils.Inventories;
-import net.aerulion.corproutine.utils.Routineaufgabe;
-import net.aerulion.corproutine.utils.Util;
+import net.aerulion.corproutine.task.UpdateDataTask;
+import net.aerulion.corproutine.utils.*;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.conversations.Conversation;
@@ -17,8 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-
-import java.sql.SQLException;
 
 public class onInvClick implements Listener {
 
@@ -44,7 +40,7 @@ public class onInvClick implements Listener {
                         if (!e.getClick().equals(ClickType.MIDDLE))
                             return;
                     }
-                    Main.EditSessions.put(e.getWhoClicked().getUniqueId(), new EditSession(e.getWhoClicked().getUniqueId(), Integer.parseInt(e.getView().getTitle().substring(Inventories.RoutineMenuNamePrefix.length()))));
+                    Main.EDIT_SESSIONS.put(e.getWhoClicked().getUniqueId(), new EditSession(e.getWhoClicked().getUniqueId(), Integer.parseInt(e.getView().getTitle().substring(Inventories.RoutineMenuNamePrefix.length()))));
                     e.getWhoClicked().openInventory(Inventories.EditMenu(e.getWhoClicked().getUniqueId()));
                     Util.setPlayerHeadTexturesAsync((Player) e.getWhoClicked());
                     return;
@@ -61,7 +57,7 @@ public class onInvClick implements Listener {
             e.setCancelled(true);
             if ((e.getView().getTopInventory().getSize() == 54) && (e.getRawSlot() >= 0 && e.getRawSlot() <= 53)) {
                 if (e.getCurrentItem().getType().equals(Material.PLAYER_HEAD) || e.getCurrentItem().getType().equals(Material.SKELETON_SKULL)) {
-                    EditSession ES = Main.EditSessions.get(e.getWhoClicked().getUniqueId());
+                    EditSession ES = Main.EDIT_SESSIONS.get(e.getWhoClicked().getUniqueId());
                     ES.toggleStaffler(e.getCurrentItem().getItemMeta().getDisplayName().substring(4));
                     ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.UI_BUTTON_CLICK, 1F, 1F);
                     if (e.getCurrentItem().getType().equals(Material.PLAYER_HEAD))
@@ -73,25 +69,18 @@ public class onInvClick implements Listener {
                     return;
                 }
                 if (e.getCurrentItem().getType().equals(Material.BARRIER)) {
-                    Main.EditSessions.remove(e.getWhoClicked().getUniqueId());
+                    Main.EDIT_SESSIONS.remove(e.getWhoClicked().getUniqueId());
                     ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.ENTITY_ITEM_BREAK, 1F, 1F);
                     e.getWhoClicked().closeInventory();
                     return;
                 }
                 if (e.getCurrentItem().getType().equals(Material.KNOWLEDGE_BOOK)) {
-                    EditSession ES = Main.EditSessions.get(e.getWhoClicked().getUniqueId());
-                    Routineaufgabe RA = Main.Routineaufgaben.get(ES.getRoutineID());
+                    EditSession ES = Main.EDIT_SESSIONS.get(e.getWhoClicked().getUniqueId());
+                    RoutineTask RA = Main.ROUTINE_TASKS.get(ES.getRoutineID());
                     e.getWhoClicked().closeInventory();
-                    try {
-                        Util.updateData(ES);
-                    } catch (SQLException e1) {
-                        e.getWhoClicked().sendMessage(Util.PluginChatPrefix + "§cDatenbankfehler.");
-                        e1.printStackTrace();
-                        return;
-                    }
-                    Main.EditSessions.remove(e.getWhoClicked().getUniqueId());
+                    new UpdateDataTask(ES);
+                    Main.EDIT_SESSIONS.remove(e.getWhoClicked().getUniqueId());
                     Util.playDoneSound((Player) e.getWhoClicked());
-
                     Util.doneMessage((Player) e.getWhoClicked(), RA.getName());
                     return;
                 }
@@ -99,7 +88,7 @@ public class onInvClick implements Listener {
                 if (e.getCurrentItem().getType().equals(Material.NAME_TAG)) {
                     e.getWhoClicked().closeInventory();
                     ConversationFactory cf = new ConversationFactory(Main.plugin);
-                    ConversationPrefix cp = prefix -> Util.PluginChatPrefix;
+                    ConversationPrefix cp = prefix -> Messages.PREFIX.getRaw();
                     Conversation c = cf.withFirstPrompt(new AdditionalHelperConversation()).withEscapeSequence("stop").withModality(false).withLocalEcho(false).withPrefix(cp).buildConversation((Player) e.getWhoClicked());
                     c.begin();
                     return;
@@ -108,7 +97,7 @@ public class onInvClick implements Listener {
                 if (e.getCurrentItem().getType().equals(Material.PAPER)) {
                     e.getWhoClicked().closeInventory();
                     ConversationFactory cf = new ConversationFactory(Main.plugin);
-                    ConversationPrefix cp = prefix -> Util.PluginChatPrefix;
+                    ConversationPrefix cp = prefix -> Messages.PREFIX.getRaw();
                     Conversation c = cf.withFirstPrompt(new CommentConversation()).withEscapeSequence("stop").withModality(false).withLocalEcho(false).withPrefix(cp).buildConversation((Player) e.getWhoClicked());
                     c.begin();
                     return;

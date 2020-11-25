@@ -23,7 +23,7 @@ public class AdditionalHelperConversation extends ValidatingPrompt {
 
     @Override
     protected Prompt acceptValidatedInput(ConversationContext con, String input) {
-        EditSession ES = Main.EditSessions.get(((Player) con.getForWhom()).getUniqueId());
+        EditSession ES = Main.EDIT_SESSIONS.get(((Player) con.getForWhom()).getUniqueId());
         for (String Staffler : input.split(" ")) {
             ES.toggleStaffler(Staffler);
         }

@@ -23,7 +23,7 @@ public class CommentConversation extends ValidatingPrompt {
 
     @Override
     protected Prompt acceptValidatedInput(ConversationContext con, String input) {
-        EditSession ES = Main.EditSessions.get(((Player) con.getForWhom()).getUniqueId());
+        EditSession ES = Main.EDIT_SESSIONS.get(((Player) con.getForWhom()).getUniqueId());
         ES.setComment(input);
         ((Player) con.getForWhom()).openInventory(Inventories.EditMenu(((Player) con.getForWhom()).getUniqueId()));
         Util.setPlayerHeadTexturesAsync((Player) con.getForWhom());

@@ -14,73 +14,81 @@ import java.util.UUID;
 
 public class EditSession {
 
-    private final UUID SessionOwner;
-    private final int RoutineID;
-    private String Comment;
-    private final List<String> DoneBy;
-    private String NextDate;
+    private final UUID sessionOwner;
+    private final int routineID;
+    private String comment;
+    private final List<String> doneBy;
+    private String nextDate;
 
     public EditSession(UUID SessionOwner, int RoutineID) {
-        this.SessionOwner = SessionOwner;
-        this.RoutineID = RoutineID;
-        this.Comment = "-";
-        this.DoneBy = new ArrayList<>();
-        this.DoneBy.add(Bukkit.getOfflinePlayer(this.SessionOwner).getName());
+        this.sessionOwner = SessionOwner;
+        this.routineID = RoutineID;
+        this.comment = "-";
+        this.doneBy = new ArrayList<>();
+        this.doneBy.add(Bukkit.getOfflinePlayer(this.sessionOwner).getName());
         calculateNextDate();
     }
 
     private void calculateNextDate() {
-        Routineaufgabe RA = Main.Routineaufgaben.get(RoutineID);
+        RoutineTask routineTask = Main.ROUTINE_TASKS.get(routineID);
         try {
-            long CycleLong = Long.parseLong(RA.getCycle());
+            long CycleLong = Long.parseLong(routineTask.getCycle());
             LocalDate localdate = LocalDate.now(ZoneId.systemDefault()).plusDays(CycleLong);
-            this.NextDate = "" + localdate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond();
+            this.nextDate = "" + localdate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond();
         } catch (NumberFormatException e) {
-            if (RA.getCycle().equalsIgnoreCase("@lastdayofmonth")) {
+            if (routineTask.getCycle().equalsIgnoreCase("@lastdayofmonth")) {
                 LocalDate localDate = LocalDate.now(ZoneId.systemDefault()).with(TemporalAdjusters.lastDayOfMonth());
                 if (localDate.equals(LocalDate.now(ZoneId.systemDefault())))
                     localDate = YearMonth.from(localDate.plusMonths(1L)).atEndOfMonth();
-                this.NextDate = "" + localDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond();
+                this.nextDate = "" + localDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond();
             }
-            if (RA.getCycle().equalsIgnoreCase("@mondaybefore_thirdsundayofmonth")) {
+            if (routineTask.getCycle().equalsIgnoreCase("@mondaybefore_thirdsundayofmonth")) {
                 LocalDate localdate = LocalDate.now(ZoneId.systemDefault()).with(TemporalAdjusters.firstDayOfNextMonth()).with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
-                this.NextDate = String.valueOf(localdate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond());
+                this.nextDate = String.valueOf(localdate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond());
             }
-            if (RA.getCycle().equalsIgnoreCase("@mondaybefore_firstsundayofmonth")) {
+            if (routineTask.getCycle().equalsIgnoreCase("@mondaybefore_firstsundayofmonth")) {
                 LocalDate localdate = LocalDate.now(ZoneId.systemDefault()).with(TemporalAdjusters.firstDayOfNextMonth()).with(TemporalAdjusters.firstInMonth(DayOfWeek.SUNDAY)).with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
-                this.NextDate = String.valueOf(localdate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond());
+                this.nextDate = String.valueOf(localdate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond());
+            }
+            if (routineTask.getCycle().equalsIgnoreCase("@sunday")) {
+                LocalDate localDate = LocalDate.now(ZoneId.systemDefault());
+                if (localDate.getDayOfWeek().equals(DayOfWeek.MONDAY))
+                    localDate = localDate.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+                else
+                    localDate = localDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+                this.nextDate = String.valueOf(localDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond());
             }
         }
     }
 
     public UUID getSessionOwner() {
-        return this.SessionOwner;
+        return this.sessionOwner;
     }
 
     public int getRoutineID() {
-        return this.RoutineID;
+        return this.routineID;
     }
 
     public String getComment() {
-        return this.Comment;
+        return this.comment;
     }
 
     public void setComment(String Comment) {
-        this.Comment = Comment;
+        this.comment = Comment;
     }
 
     public List<String> getDoneBy() {
-        return this.DoneBy;
+        return this.doneBy;
     }
 
     public void toggleStaffler(String Name) {
-        if (DoneBy.contains(Name))
-            DoneBy.remove(Name);
+        if (doneBy.contains(Name))
+            doneBy.remove(Name);
         else
-            DoneBy.add(Name);
+            doneBy.add(Name);
     }
 
     public String getNextDate() {
-        return this.NextDate;
+        return this.nextDate;
     }
 }

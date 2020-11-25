@@ -11,15 +11,15 @@ import java.util.List;
 
 public class ItemBuilder {
 
-    public static ItemStack createRoutineItemStack(Routineaufgabe RA) {
-        ItemStack RoutineItem = new ItemStack(RA.getIsExpired() ? Material.RED_DYE : Material.LIME_DYE);
+    public static ItemStack createRoutineItemStack(RoutineTask RA) {
+        ItemStack RoutineItem = new ItemStack(RA.isExpired() ? Material.RED_DYE : Material.LIME_DYE);
         ItemMeta mRoutineItem = RoutineItem.getItemMeta();
         mRoutineItem.setDisplayName("§e§l" + RA.getName());
         List<String> Lore = new ArrayList<>();
         Lore.add("§8Aufgaben-ID: " + RA.getID());
         Lore.add("§7Kategorie: §a" + Util.formatCategory(RA.getCategory()));
         Lore.add("§7Intervall: " + Util.formatCycle(RA.getCycle()));
-        Lore.add("§7Fällig am: §a" + RA.getExpireDate());
+        Lore.add("§7Fällig am: §a" + RA.getExpiryDate());
         Lore.add("§7Zuletzt erledigt von: §a" + String.join("§7, §a", RA.getDoneBy()));
         Lore.add("§7Kommentar: §a");
         for (String s : Util.WrapString(RA.getComment(), 30)) {

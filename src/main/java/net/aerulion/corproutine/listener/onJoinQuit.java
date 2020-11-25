@@ -21,6 +21,6 @@ public class onJoinQuit implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
-        Main.EditSessions.remove(e.getPlayer().getUniqueId());
+        Main.EDIT_SESSIONS.remove(e.getPlayer().getUniqueId());
     }
 }
