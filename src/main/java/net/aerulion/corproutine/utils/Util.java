@@ -1,6 +1,8 @@
 package net.aerulion.corproutine.utils;
 
 import net.aerulion.corproutine.Main;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -129,27 +131,39 @@ public class Util {
     }
 
     public static void playAlert(Player player) {
-        Bukkit.getScheduler().runTaskLater(Main.plugin, () -> {
-            player.sendMessage(Messages.MESSAGE_EXPIRED_TASKS.get().replaceAll("\\{COUNT}", String.valueOf(Util.countExpired())));
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 0.707F);
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 0.891F);
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1.059F);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, () -> {
+            if (Util.countExpired() > 0) {
+                player.sendMessage(Messages.MESSAGE_EXPIRED_TASKS.get()
+                        .replaceText(TextReplacementConfig.builder()
+                                .replacement(String.valueOf(Util.countExpired()))
+                                .match("%count%").build()));
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 0.707F);
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 0.891F);
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1.059F);
+                Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, () -> {
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1.414F);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1.782F);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 2F);
+                }, 5L);
+            }
         }, 100L);
-        Bukkit.getScheduler().runTaskLater(Main.plugin, () -> {
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1.414F);
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1.782F);
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 2F);
-        }, 105L);
     }
 
-    public static void doneMessage(Player staffler, String name) {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.hasPermission(Permissions.ALERT.get())) {
-                if (!player.getName().equalsIgnoreCase(staffler.getName())) {
-                    player.sendMessage(Messages.MESSAGE_TASK_DONE.get().replaceAll("\\{PLAYER}", staffler.getName()).replaceAll("\\{TASK}", name));
-                }
-            }
-        }
-        staffler.sendMessage(Messages.MESSAGE_TASK_DONE_SELF.get().replaceAll("\\{TASK}", name));
+    public static void doneMessage(Player staffler, String taskName) {
+        Component message = Messages.MESSAGE_TASK_DONE.get()
+                .replaceText(TextReplacementConfig.builder()
+                        .replacement(staffler.getName())
+                        .match("%player%").build())
+                .replaceText(TextReplacementConfig.builder()
+                        .replacement(taskName)
+                        .match("%task%").build());
+        Bukkit.getOnlinePlayers().stream()
+                .filter(player -> player.hasPermission(Permissions.ALERT.get())
+                        && !player.getName().equalsIgnoreCase(staffler.getName()))
+                .forEach(player -> player.sendMessage(message));
+        staffler.sendMessage(Messages.MESSAGE_TASK_DONE_SELF.get()
+                .replaceText(TextReplacementConfig.builder()
+                        .replacement(taskName)
+                        .match("%task%").build()));
     }
 }

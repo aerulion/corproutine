@@ -17,7 +17,7 @@ public class Main extends JavaPlugin {
 
     public static final HashMap<Integer, RoutineTask> ROUTINE_TASKS = new HashMap<>();
     public static final HashMap<UUID, EditSession> EDIT_SESSIONS = new HashMap<>();
-    public static final List<String> Staffler = Arrays.asList("LottaXL", "TheoRetisch1", "aerulion", "kikelkik", "Richie932", "melly061992", "PixelWorker", "Himmi_MK", "Lele", "__Lemming__", "BarSerkr", "LauCherry");
+    public static final List<String> Staffler = Arrays.asList("LottaXL", "TheoRetisch1", "aerulion", "kikelkik", "Richie932", "PixelWorker", "Lele", "__Lemming__", "BarSerkr", "LauCherry", "Anexa");
     public static Main plugin;
 
     @Override

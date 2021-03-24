@@ -1,27 +1,66 @@
 package net.aerulion.corproutine.utils;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+
 public enum Messages {
-    ERROR_DATABASE("§cFehler bei der Kommunikation mit der Datenbank."),
-    ERROR_NO_PERMISSION("§cFehler: Du hast nicht die erforderlichen Rechte."),
-    ERROR_NO_PLAYER("§cFehler: Dieser Befehl kann nur als Spieler ausgeführt werden."),
+    ERROR_ALREADY_CONVERSING(Component.text("Fehler: Es ist bereits eine Chat-Eingabe aktiv.")
+            .color(NamedTextColor.RED)),
+    ERROR_DATABASE(Component.text("Fehler bei der Kommunikation mit der Datenbank.")
+            .color(NamedTextColor.RED)),
+    ERROR_NO_PERMISSION(Component.text("Fehler: Du hast nicht die erforderlichen Rechte.")
+            .color(NamedTextColor.RED)),
+    ERROR_NO_PLAYER(Component.text("Fehler: Dieser Befehl kann nur als Spieler ausgeführt werden.")
+            .color(NamedTextColor.RED)),
+    MESSAGE_EXPIRED_TASKS(Component.text("Es sind ")
+            .color(NamedTextColor.GRAY)
+            .append(Component.text("%count%")
+                    .color(NamedTextColor.YELLOW)
+                    .decorate(TextDecoration.BOLD))
+            .append(Component.text(" Routineaufgaben überfällig.")
+                    .color(NamedTextColor.GRAY)
+                    .decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))),
+    MESSAGE_TASK_DONE(Component.text("%player%")
+            .color(NamedTextColor.YELLOW)
+            .decorate(TextDecoration.BOLD)
+            .append(Component.text(" hat die Routineaufgabe ")
+                    .color(NamedTextColor.GRAY)
+                    .decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))
+            .append(Component.text("%task%")
+                    .color(NamedTextColor.YELLOW)
+                    .decorate(TextDecoration.BOLD))
+            .append(Component.text(" abgeschlossen.")
+                    .color(NamedTextColor.GRAY)
+                    .decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))),
+    MESSAGE_TASK_DONE_SELF(Component.text("Du hast die Routineaufgabe ")
+            .color(NamedTextColor.GREEN)
+            .append(Component.text("%task%")
+                    .color(NamedTextColor.YELLOW)
+                    .decorate(TextDecoration.BOLD))
+            .append(Component.text(" abgeschlossen.")
+                    .color(NamedTextColor.GREEN)
+                    .decoration(TextDecoration.BOLD, TextDecoration.State.FALSE))),
+    PREFIX(Component.text("[")
+            .color(NamedTextColor.GRAY)
+            .append(Component.text("Routine")
+                    .color(NamedTextColor.YELLOW)
+                    .decorate(TextDecoration.BOLD))
+            .append(Component.text("] ")
+                    .color(NamedTextColor.GRAY)
+                    .decoration(TextDecoration.BOLD, TextDecoration.State.FALSE)));
 
-    MESSAGE_EXPIRED_TASKS("§7Es sind §e§l{COUNT}§7 Routineaufgaben überfällig."),
-    MESSAGE_TASK_DONE("§e{PLAYER}§7 hat die Routineaufgabe §e{TASK}§7 abgeschlossen."),
-    MESSAGE_TASK_DONE_SELF("§aDu hast die Routineaufgabe §e{TASK}§a abgeschlossen."),
+    private final Component message;
 
-    PREFIX("§7[§e§lRoutine§7]§7 ");
-
-    private final String message;
-
-    Messages(String message) {
+    Messages(Component message) {
         this.message = message;
     }
 
-    public String get() {
-        return PREFIX.getRaw() + message;
+    public Component get() {
+        return PREFIX.getRaw().append(message);
     }
 
-    public String getRaw() {
+    public Component getRaw() {
         return message;
     }
 }

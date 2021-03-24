@@ -1,8 +1,9 @@
 name: CorpRoutine
 main: net.aerulion.corproutine.Main
-version: '2.0'
+version: ${project.version}
 author: aerulion
 api-version: '1.16'
+depend: [ Nucleus ]
 commands:
   routine:
     description: Oeffnet das Routine-Aufgaben-Menu

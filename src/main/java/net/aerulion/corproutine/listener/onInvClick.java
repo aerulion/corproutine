@@ -3,13 +3,14 @@ package net.aerulion.corproutine.listener;
 import net.aerulion.corproutine.Main;
 import net.aerulion.corproutine.conversation.AdditionalHelperConversation;
 import net.aerulion.corproutine.conversation.CommentConversation;
+import net.aerulion.corproutine.conversation.ConversationUtil;
 import net.aerulion.corproutine.task.UpdateDataTask;
-import net.aerulion.corproutine.utils.*;
+import net.aerulion.corproutine.utils.EditSession;
+import net.aerulion.corproutine.utils.Inventories;
+import net.aerulion.corproutine.utils.RoutineTask;
+import net.aerulion.corproutine.utils.Util;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.conversations.ConversationPrefix;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -86,20 +87,12 @@ public class onInvClick implements Listener {
                 }
 
                 if (e.getCurrentItem().getType().equals(Material.NAME_TAG)) {
-                    e.getWhoClicked().closeInventory();
-                    ConversationFactory cf = new ConversationFactory(Main.plugin);
-                    ConversationPrefix cp = prefix -> Messages.PREFIX.getRaw();
-                    Conversation c = cf.withFirstPrompt(new AdditionalHelperConversation()).withEscapeSequence("stop").withModality(false).withLocalEcho(false).withPrefix(cp).buildConversation((Player) e.getWhoClicked());
-                    c.begin();
+                    ConversationUtil.startConversation((Player) e.getWhoClicked(), new AdditionalHelperConversation());
                     return;
                 }
 
                 if (e.getCurrentItem().getType().equals(Material.PAPER)) {
-                    e.getWhoClicked().closeInventory();
-                    ConversationFactory cf = new ConversationFactory(Main.plugin);
-                    ConversationPrefix cp = prefix -> Messages.PREFIX.getRaw();
-                    Conversation c = cf.withFirstPrompt(new CommentConversation()).withEscapeSequence("stop").withModality(false).withLocalEcho(false).withPrefix(cp).buildConversation((Player) e.getWhoClicked());
-                    c.begin();
+                    ConversationUtil.startConversation((Player) e.getWhoClicked(), new CommentConversation());
                     return;
                 }
             }

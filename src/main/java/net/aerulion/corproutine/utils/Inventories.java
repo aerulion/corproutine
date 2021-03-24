@@ -9,9 +9,9 @@ import java.util.UUID;
 
 public class Inventories {
 
-    public static String MainMenuName = "§e§lRoutineaufgaben";
-    public static String RoutineMenuNamePrefix = "§e§lRoutineaufgabe #";
-    public static String EditMenuNamePrefix = "§e§lBearbeiten #";
+    public static final String MainMenuName = "§e§lRoutineaufgaben";
+    public static final String RoutineMenuNamePrefix = "§e§lRoutineaufgabe #";
+    public static final String EditMenuNamePrefix = "§e§lBearbeiten #";
 
     public static Inventory MainMenu() {
         Inventory MainMenu = Bukkit.createInventory(null, 54, MainMenuName);

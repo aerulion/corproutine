@@ -1,5 +1,7 @@
 package net.aerulion.corproutine.utils;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.aerulion.corproutine.Main;
 import org.bukkit.Bukkit;
 
@@ -12,10 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
 public class EditSession {
 
     private final UUID sessionOwner;
     private final int routineID;
+    @Setter
     private String comment;
     private final List<String> doneBy;
     private String nextDate;
@@ -61,34 +65,8 @@ public class EditSession {
         }
     }
 
-    public UUID getSessionOwner() {
-        return this.sessionOwner;
-    }
-
-    public int getRoutineID() {
-        return this.routineID;
-    }
-
-    public String getComment() {
-        return this.comment;
-    }
-
-    public void setComment(String Comment) {
-        this.comment = Comment;
-    }
-
-    public List<String> getDoneBy() {
-        return this.doneBy;
-    }
-
-    public void toggleStaffler(String Name) {
-        if (doneBy.contains(Name))
-            doneBy.remove(Name);
-        else
-            doneBy.add(Name);
-    }
-
-    public String getNextDate() {
-        return this.nextDate;
+    public void toggleStaffler(String stafflerName) {
+        if (!doneBy.remove(stafflerName))
+            doneBy.add(stafflerName);
     }
 }

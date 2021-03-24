@@ -1,6 +1,7 @@
 package net.aerulion.corproutine.cmd;
 
 import net.aerulion.corproutine.Main;
+import net.aerulion.corproutine.task.LoadDataTask;
 import net.aerulion.corproutine.utils.Inventories;
 import net.aerulion.corproutine.utils.Messages;
 import net.aerulion.corproutine.utils.Permissions;
@@ -35,7 +36,7 @@ public class CMD_routine implements CommandExecutor, TabCompleter {
             Util.setPlayerHeadTexturesAsync(player);
             return true;
         }
-        player.openInventory(Inventories.MainMenu());
+        new LoadDataTask(player);
         return true;
     }
 
