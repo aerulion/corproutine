@@ -2,7 +2,7 @@ name: CorpRoutine
 main: net.aerulion.corproutine.Main
 version: ${project.version}
 author: aerulion
-api-version: '1.16'
+api-version: '1.17'
 depend: [ Nucleus ]
 commands:
   routine:

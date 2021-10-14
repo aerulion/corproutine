@@ -11,16 +11,16 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class onJoinQuit implements Listener {
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e) {
-        if (e.getPlayer().hasPermission(Permissions.ALERT.get())) {
-            new LoadDataTask();
-            Util.playAlert(e.getPlayer());
-        }
+  @EventHandler
+  public void onPlayerJoin(PlayerJoinEvent e) {
+    if (e.getPlayer().hasPermission(Permissions.ALERT.get())) {
+      new LoadDataTask();
+      Util.playAlert(e.getPlayer());
     }
+  }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e) {
-        Main.EDIT_SESSIONS.remove(e.getPlayer().getUniqueId());
-    }
+  @EventHandler
+  public void onPlayerQuit(PlayerQuitEvent e) {
+    Main.EDIT_SESSIONS.remove(e.getPlayer().getUniqueId());
+  }
 }

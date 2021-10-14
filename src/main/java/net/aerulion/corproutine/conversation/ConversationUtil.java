@@ -15,16 +15,20 @@ import org.jetbrains.annotations.NotNull;
 
 @UtilityClass
 public final class ConversationUtil {
-    public static void startConversation(@NotNull Player player, @NotNull Prompt prompt) {
-        player.closeInventory();
-        if (player.isConversing()) {
-            player.sendMessage(Messages.ERROR_ALREADY_CONVERSING.get());
-            SoundUtils.playSound(player, SoundType.ERROR);
-            return;
-        }
-        ConversationFactory conversationFactory = new ConversationFactory(Main.plugin);
-        ConversationPrefix conversationPrefix = prefix -> LegacyComponentSerializer.legacySection().serialize(Messages.PREFIX.getRaw());
-        Conversation c = conversationFactory.withFirstPrompt(prompt).withEscapeSequence("stop").withModality(false).withLocalEcho(false).withPrefix(conversationPrefix).buildConversation(player);
-        c.begin();
+
+  public static void startConversation(@NotNull Player player, @NotNull Prompt prompt) {
+    player.closeInventory();
+    if (player.isConversing()) {
+      player.sendMessage(Messages.ERROR_ALREADY_CONVERSING.get());
+      SoundUtils.playSound(player, SoundType.ERROR);
+      return;
     }
+    ConversationFactory conversationFactory = new ConversationFactory(Main.plugin);
+    ConversationPrefix conversationPrefix = prefix -> LegacyComponentSerializer.legacySection()
+        .serialize(Messages.PREFIX.getRaw());
+    Conversation c = conversationFactory.withFirstPrompt(prompt).withEscapeSequence("stop")
+        .withModality(false).withLocalEcho(false).withPrefix(conversationPrefix)
+        .buildConversation(player);
+    c.begin();
+  }
 }
