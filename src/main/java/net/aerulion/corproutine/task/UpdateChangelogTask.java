@@ -15,7 +15,7 @@ public class UpdateChangelogTask extends BukkitRunnable {
   private final String USER;
   private final String TASK;
 
-  public UpdateChangelogTask(int ID, String USER, String TASK) {
+  public UpdateChangelogTask(final int ID, final String USER, final String TASK) {
     this.ID = ID;
     this.USER = USER;
     this.TASK = TASK;
@@ -24,8 +24,8 @@ public class UpdateChangelogTask extends BukkitRunnable {
 
   @Override
   public void run() {
-    try (Connection connection = MySQLUtils.getConnection()) {
-      PreparedStatement preparedStatement = connection.prepareStatement(
+    try (final Connection connection = MySQLUtils.getConnection()) {
+      final PreparedStatement preparedStatement = connection.prepareStatement(
           "INSERT INTO `stafftool`.`tool_changelog` (toolname,id_intool,type,changeby,meta) VALUES (?,?,?,(SELECT uid FROM tool_users WHERE username=?),?)");
       preparedStatement.setString(1, "routinearbeiten");
       preparedStatement.setInt(2, ID);
@@ -34,11 +34,11 @@ public class UpdateChangelogTask extends BukkitRunnable {
       preparedStatement.setString(5, "{\"lang_args\":[\"" + USER + "\",\"" + TASK + "\"]}");
       preparedStatement.executeUpdate();
       preparedStatement.close();
-      PreparedStatement preparedStatement2 = connection.prepareStatement(
+      final PreparedStatement preparedStatement2 = connection.prepareStatement(
           "UPDATE `stafftool`.`tool_datacache` SET cache = (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('id', id, 'task', task, 'category', category, 'nextdate', nextdate) separator ','), ']') FROM `stafftool`.`tool_routine` WHERE nextdate <= UNIX_TIMESTAMP()) WHERE title = 'routine_urgent'");
       preparedStatement2.executeUpdate();
       preparedStatement2.close();
-    } catch (SQLException exception) {
+    } catch (final SQLException exception) {
       ConsoleUtils.sendColoredConsoleMessage(Messages.ERROR_DATABASE.get());
     }
   }

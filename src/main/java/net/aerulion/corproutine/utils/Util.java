@@ -16,6 +16,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Util {
 
@@ -27,7 +29,7 @@ public class Util {
 
   public static int countExpired() {
     int Expired = 0;
-    for (RoutineTask routineTask : Main.ROUTINE_TASKS.values()) {
+    for (final @NotNull RoutineTask routineTask : Main.ROUTINE_TASKS.values()) {
       if (routineTask.isExpired()) {
         Expired++;
       }
@@ -35,26 +37,26 @@ public class Util {
     return Expired;
   }
 
-  public static List<String> convertNames(String Names) {
-    List<String> NamesList = new ArrayList<>();
+  public static @NotNull List<String> convertNames(final @NotNull String Names) {
+    final @NotNull List<String> NamesList = new ArrayList<>();
     Collections.addAll(NamesList, Names.replaceAll(" ", "").split(","));
     return NamesList;
   }
 
-  public static String convertDate(String time) {
-    long unixSeconds = Long.parseLong(time);
-    Date date = new Date(unixSeconds * 1000L);
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+  public static @NotNull String convertDate(final @NotNull String time) {
+    final long unixSeconds = Long.parseLong(time);
+    final @NotNull Date date = new Date(unixSeconds * 1000L);
+    final @NotNull SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
     return sdf.format(date);
   }
 
-  public static void setPlayerHeadTexturesAsync(Player player) {
+  public static void setPlayerHeadTexturesAsync(final @NotNull Player player) {
     Bukkit.getServer().getScheduler().runTaskAsynchronously(Main.plugin, () -> {
-      for (ItemStack is : player.getOpenInventory().getTopInventory()) {
+      for (final @Nullable ItemStack is : player.getOpenInventory().getTopInventory()) {
         if (is != null) {
-          if (is.getType().equals(Material.PLAYER_HEAD)) {
+          if (is.getType() == Material.PLAYER_HEAD) {
             if (is.getItemMeta().getDisplayName().startsWith("§a§l")) {
-              SkullMeta skullMeta = (SkullMeta) is.getItemMeta();
+              final @NotNull SkullMeta skullMeta = (SkullMeta) is.getItemMeta();
               skullMeta.setOwner(skullMeta.getDisplayName().substring(4));
               is.setItemMeta(skullMeta);
             }
@@ -64,9 +66,9 @@ public class Util {
     });
   }
 
-  public static String formatCycle(String Cycle) {
+  public static @NotNull String formatCycle(final @NotNull String Cycle) {
     try {
-      int CycleInt = Integer.parseInt(Cycle);
+      final int CycleInt = Integer.parseInt(Cycle);
       if (CycleInt % 365 == 0) {
         return CycleInt / 365 == 1 ? "§ajährlich" : "§a" + CycleInt / 365 + "-jährlich";
       }
@@ -77,7 +79,7 @@ public class Util {
         return CycleInt / 7 == 1 ? "§awöchentlich" : "§a" + CycleInt / 7 + "-wöchentlich";
       }
       return "§a" + CycleInt + " Tage";
-    } catch (NumberFormatException e) {
+    } catch (final NumberFormatException e) {
       if (Cycle.equalsIgnoreCase("@lastdayofmonth")) {
         return "§aLetzter Monatstag";
       }
@@ -95,7 +97,7 @@ public class Util {
 
   }
 
-  public static String formatCategory(String Category) {
+  public static @NotNull String formatCategory(final @NotNull String Category) {
     if (Category.equalsIgnoreCase("gs-delete")) {
       return "Grundstücke löschen";
     }
@@ -111,14 +113,14 @@ public class Util {
     return Category;
   }
 
-  public static List<String> WrapString(String Comment, int width) {
-    List<String> WrappedString = new ArrayList<>();
-    String wrapped = WordUtils.wrap(Comment, width, "\n", true);
+  public static @NotNull List<String> WrapString(final String Comment, final int width) {
+    final @NotNull List<String> WrappedString = new ArrayList<>();
+    final String wrapped = WordUtils.wrap(Comment, width, "\n", true);
     Collections.addAll(WrappedString, wrapped.split("\n"));
     return WrappedString;
   }
 
-  public static void playDoneSound(Player player) {
+  public static void playDoneSound(final @NotNull Player player) {
     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 0.529F);
     Bukkit.getScheduler().runTaskLater(Main.plugin, () -> {
       player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 0.595F);
@@ -143,11 +145,11 @@ public class Util {
     }, 14L);
   }
 
-  public static void playAlert(Player player) {
+  public static void playAlert(final @NotNull Player player) {
     Bukkit.getScheduler().runTaskLaterAsynchronously(Main.plugin, () -> {
-      if (Util.countExpired() > 0) {
+      if (countExpired() > 0) {
         player.sendMessage(Messages.MESSAGE_EXPIRED_TASKS.get().replaceText(
-            TextReplacementConfig.builder().replacement(String.valueOf(Util.countExpired()))
+            TextReplacementConfig.builder().replacement(String.valueOf(countExpired()))
                 .match("%count%").build()));
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 0.707F);
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 0.891F);
@@ -161,8 +163,8 @@ public class Util {
     }, 100L);
   }
 
-  public static void doneMessage(Player staffler, String taskName) {
-    Component message = Messages.MESSAGE_TASK_DONE.get().replaceText(
+  public static void doneMessage(final @NotNull Player staffler, final @NotNull String taskName) {
+    final @NotNull Component message = Messages.MESSAGE_TASK_DONE.get().replaceText(
             TextReplacementConfig.builder().replacement(staffler.getName()).match("%player%").build())
         .replaceText(TextReplacementConfig.builder().replacement(taskName).match("%task%").build());
     Bukkit.getOnlinePlayers().stream().filter(

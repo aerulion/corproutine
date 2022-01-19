@@ -19,8 +19,8 @@ public class RoutineTask {
 
   private boolean isExpired;
 
-  public RoutineTask(int ID, String cycle, String name, String expiryDate, String comment,
-      String category, List<String> doneBy) {
+  public RoutineTask(final int ID, final String cycle, final String name, final String expiryDate,
+      final String comment, final String category, final List<String> doneBy) {
     this.ID = ID;
     this.cycle = cycle;
     this.name = name;
@@ -32,10 +32,10 @@ public class RoutineTask {
   }
 
   private void checkIfExpired() {
-    Date expiryDate;
+    final Date expiryDate;
     try {
       expiryDate = new SimpleDateFormat("dd.MM.yyyy").parse(this.expiryDate);
-    } catch (ParseException e) {
+    } catch (final ParseException e) {
       return;
     }
     this.isExpired = expiryDate.before(new Date());

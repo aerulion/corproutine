@@ -8,23 +8,26 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.ValidatingPrompt;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class AdditionalHelperConversation extends ValidatingPrompt {
 
   @Override
-  public String getPromptText(ConversationContext con) {
+  public @NotNull String getPromptText(final @NotNull ConversationContext con) {
     return "Tippe die Namen der zusätzlichen Helfer in den Chat. Trenne einzelne Namen durch ein Leerzeichen. Schreibe 'stop' um den Vorgang abzubrechen.";
   }
 
   @Override
-  protected boolean isInputValid(ConversationContext context, String input) {
+  protected boolean isInputValid(final @NotNull ConversationContext context,
+      final @NotNull String input) {
     return true;
   }
 
   @Override
-  protected Prompt acceptValidatedInput(ConversationContext con, String input) {
-    EditSession ES = Main.EDIT_SESSIONS.get(((Player) con.getForWhom()).getUniqueId());
-    for (String Staffler : input.split(" ")) {
+  protected Prompt acceptValidatedInput(final @NotNull ConversationContext con,
+      final @NotNull String input) {
+    final EditSession ES = Main.EDIT_SESSIONS.get(((Player) con.getForWhom()).getUniqueId());
+    for (final String Staffler : input.split(" ")) {
       ES.toggleStaffler(Staffler);
     }
     ((Player) con.getForWhom()).openInventory(
@@ -34,7 +37,8 @@ public class AdditionalHelperConversation extends ValidatingPrompt {
   }
 
   @Override
-  public String getFailedValidationText(ConversationContext con, String InvalidInput) {
+  public String getFailedValidationText(final @NotNull ConversationContext con,
+      final @NotNull String InvalidInput) {
     return "Fehler.";
   }
 }

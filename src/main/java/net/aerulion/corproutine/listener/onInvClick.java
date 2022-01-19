@@ -16,11 +16,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class onInvClick implements Listener {
 
   @EventHandler
-  public void onInventoryClick(InventoryClickEvent e) {
+  public void onInventoryClick(final @NotNull InventoryClickEvent e) {
     if (e.getView().getTitle().equals(Inventories.MainMenuName)) {
       e.setCancelled(true);
       if ((e.getView().getTopInventory().getSize() == 54) && (e.getRawSlot() >= 0
@@ -41,10 +42,10 @@ public class onInvClick implements Listener {
       if ((e.getView().getTopInventory().getSize() == 54) && (e.getRawSlot() >= 0
           && e.getRawSlot() <= 53)) {
         if (e.getRawSlot() == 13) {
-          if (e.getCurrentItem().getType().equals(Material.GRAY_DYE)) {
-              if (!e.getClick().equals(ClickType.MIDDLE)) {
-                  return;
-              }
+          if (e.getCurrentItem().getType() == Material.GRAY_DYE) {
+            if (e.getClick() != ClickType.MIDDLE) {
+              return;
+            }
           }
           Main.EDIT_SESSIONS.put(e.getWhoClicked().getUniqueId(),
               new EditSession(e.getWhoClicked().getUniqueId(), Integer.parseInt(
@@ -66,33 +67,33 @@ public class onInvClick implements Listener {
       e.setCancelled(true);
       if ((e.getView().getTopInventory().getSize() == 54) && (e.getRawSlot() >= 0
           && e.getRawSlot() <= 53)) {
-        if (e.getCurrentItem().getType().equals(Material.PLAYER_HEAD) || e.getCurrentItem()
-            .getType().equals(Material.SKELETON_SKULL)) {
-          EditSession ES = Main.EDIT_SESSIONS.get(e.getWhoClicked().getUniqueId());
+        if (e.getCurrentItem().getType() == Material.PLAYER_HEAD
+            || e.getCurrentItem().getType() == Material.SKELETON_SKULL) {
+          final EditSession ES = Main.EDIT_SESSIONS.get(e.getWhoClicked().getUniqueId());
           ES.toggleStaffler(e.getCurrentItem().getItemMeta().getDisplayName().substring(4));
           ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
               Sound.UI_BUTTON_CLICK, 1F, 1F);
-            if (e.getCurrentItem().getType().equals(Material.PLAYER_HEAD)) {
-                ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-                    Sound.ENTITY_VILLAGER_NO, 1F, 1F);
-            } else {
-                ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
-                    Sound.ENTITY_VILLAGER_YES, 1F, 1F);
-            }
+          if (e.getCurrentItem().getType() == Material.PLAYER_HEAD) {
+            ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
+                Sound.ENTITY_VILLAGER_NO, 1F, 1F);
+          } else {
+            ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
+                Sound.ENTITY_VILLAGER_YES, 1F, 1F);
+          }
           e.getWhoClicked().openInventory(Inventories.EditMenu(e.getWhoClicked().getUniqueId()));
           Util.setPlayerHeadTexturesAsync((Player) e.getWhoClicked());
           return;
         }
-        if (e.getCurrentItem().getType().equals(Material.BARRIER)) {
+        if (e.getCurrentItem().getType() == Material.BARRIER) {
           Main.EDIT_SESSIONS.remove(e.getWhoClicked().getUniqueId());
           ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(),
               Sound.ENTITY_ITEM_BREAK, 1F, 1F);
           e.getWhoClicked().closeInventory();
           return;
         }
-        if (e.getCurrentItem().getType().equals(Material.KNOWLEDGE_BOOK)) {
-          EditSession ES = Main.EDIT_SESSIONS.get(e.getWhoClicked().getUniqueId());
-          RoutineTask RA = Main.ROUTINE_TASKS.get(ES.getRoutineID());
+        if (e.getCurrentItem().getType() == Material.KNOWLEDGE_BOOK) {
+          final EditSession ES = Main.EDIT_SESSIONS.get(e.getWhoClicked().getUniqueId());
+          final RoutineTask RA = Main.ROUTINE_TASKS.get(ES.getRoutineID());
           e.getWhoClicked().closeInventory();
           new UpdateDataTask(ES);
           Main.EDIT_SESSIONS.remove(e.getWhoClicked().getUniqueId());
@@ -101,13 +102,13 @@ public class onInvClick implements Listener {
           return;
         }
 
-        if (e.getCurrentItem().getType().equals(Material.NAME_TAG)) {
+        if (e.getCurrentItem().getType() == Material.NAME_TAG) {
           ConversationUtil.startConversation((Player) e.getWhoClicked(),
               new AdditionalHelperConversation());
           return;
         }
 
-        if (e.getCurrentItem().getType().equals(Material.PAPER)) {
+        if (e.getCurrentItem().getType() == Material.PAPER) {
           ConversationUtil.startConversation((Player) e.getWhoClicked(), new CommentConversation());
           return;
         }

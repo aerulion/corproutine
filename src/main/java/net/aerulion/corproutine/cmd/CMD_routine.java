@@ -15,16 +15,17 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class CMD_routine implements CommandExecutor, TabCompleter {
 
-  public boolean onCommand(CommandSender commandSender, Command command, String label,
-      String[] args) {
+  public boolean onCommand(final @NotNull CommandSender commandSender,
+      final @NotNull Command command, final @NotNull String label, final String[] args) {
     if (!(commandSender instanceof Player)) {
       commandSender.sendMessage(Messages.ERROR_NO_PLAYER.get());
       return true;
     }
-    Player player = (Player) commandSender;
+    final @NotNull Player player = (Player) commandSender;
     if (!player.hasPermission(Permissions.CMD_ROUTINE.get())) {
       commandSender.sendMessage(Messages.ERROR_NO_PERMISSION.get());
       SoundUtils.playSound(player, SoundType.ERROR);
@@ -40,8 +41,8 @@ public class CMD_routine implements CommandExecutor, TabCompleter {
     return true;
   }
 
-  public List<String> onTabComplete(CommandSender sender, Command command, String alias,
-      String[] args) {
+  public List<String> onTabComplete(final @NotNull CommandSender sender,
+      final @NotNull Command command, final @NotNull String alias, final String[] args) {
     return Collections.emptyList();
   }
 }

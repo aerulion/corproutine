@@ -16,19 +16,19 @@ import org.jetbrains.annotations.NotNull;
 @UtilityClass
 public final class ConversationUtil {
 
-  public static void startConversation(@NotNull Player player, @NotNull Prompt prompt) {
+  public static void startConversation(@NotNull final Player player, @NotNull final Prompt prompt) {
     player.closeInventory();
     if (player.isConversing()) {
       player.sendMessage(Messages.ERROR_ALREADY_CONVERSING.get());
       SoundUtils.playSound(player, SoundType.ERROR);
       return;
     }
-    ConversationFactory conversationFactory = new ConversationFactory(Main.plugin);
-    ConversationPrefix conversationPrefix = prefix -> LegacyComponentSerializer.legacySection()
+    final @NotNull ConversationFactory conversationFactory = new ConversationFactory(Main.plugin);
+    final @NotNull ConversationPrefix conversationPrefix = prefix -> LegacyComponentSerializer.legacySection()
         .serialize(Messages.PREFIX.getRaw());
-    Conversation c = conversationFactory.withFirstPrompt(prompt).withEscapeSequence("stop")
-        .withModality(false).withLocalEcho(false).withPrefix(conversationPrefix)
-        .buildConversation(player);
+    final @NotNull Conversation c = conversationFactory.withFirstPrompt(prompt)
+        .withEscapeSequence("stop").withModality(false).withLocalEcho(false)
+        .withPrefix(conversationPrefix).buildConversation(player);
     c.begin();
   }
 }

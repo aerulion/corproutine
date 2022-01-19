@@ -23,17 +23,17 @@ public class LoadDataTask extends BukkitRunnable {
     this.runTaskAsynchronously(Main.plugin);
   }
 
-  public LoadDataTask(Player player) {
+  public LoadDataTask(final Player player) {
     this.player = player;
     this.runTaskAsynchronously(Main.plugin);
   }
 
   @Override
   public void run() {
-    try (Connection connection = MySQLUtils.getConnection()) {
-      PreparedStatement preparedStatement = connection.prepareStatement(
+    try (final Connection connection = MySQLUtils.getConnection()) {
+      final PreparedStatement preparedStatement = connection.prepareStatement(
           "SELECT * FROM `stafftool`.`tool_routine`");
-      ResultSet resultSet = preparedStatement.executeQuery();
+      final ResultSet resultSet = preparedStatement.executeQuery();
       Main.ROUTINE_TASKS.clear();
       while (resultSet.next()) {
         Main.ROUTINE_TASKS.put(resultSet.getInt(1),
@@ -41,11 +41,11 @@ public class LoadDataTask extends BukkitRunnable {
                 Util.convertDate(resultSet.getString(5)), resultSet.getString(7),
                 resultSet.getString(2), Util.convertNames(resultSet.getString(6))));
       }
-        if (player != null) {
-            Bukkit.getScheduler()
-                .runTask(Main.plugin, () -> player.openInventory(Inventories.MainMenu()));
-        }
-    } catch (SQLException exception) {
+      if (player != null) {
+        Bukkit.getScheduler()
+            .runTask(Main.plugin, () -> player.openInventory(Inventories.MainMenu()));
+      }
+    } catch (final SQLException exception) {
       ConsoleUtils.sendColoredConsoleMessage(Messages.ERROR_DATABASE.get());
     }
   }

@@ -3,6 +3,7 @@ package net.aerulion.corproutine.utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.jetbrains.annotations.NotNull;
 
 public enum Messages {
   ERROR_ALREADY_CONVERSING(
@@ -35,11 +36,11 @@ public enum Messages {
 
   private final Component message;
 
-  Messages(Component message) {
+  Messages(final Component message) {
     this.message = message;
   }
 
-  public Component get() {
+  public @NotNull Component get() {
     return PREFIX.getRaw().append(message);
   }
 

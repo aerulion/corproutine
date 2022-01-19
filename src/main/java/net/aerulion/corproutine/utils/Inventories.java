@@ -5,6 +5,7 @@ import net.aerulion.corproutine.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class Inventories {
 
@@ -12,19 +13,20 @@ public class Inventories {
   public static final String RoutineMenuNamePrefix = "§e§lRoutineaufgabe #";
   public static final String EditMenuNamePrefix = "§e§lBearbeiten #";
 
-  public static Inventory MainMenu() {
-    Inventory MainMenu = Bukkit.createInventory(null, 54, MainMenuName);
-    for (RoutineTask RA : Main.ROUTINE_TASKS.values()) {
+  public static @NotNull Inventory MainMenu() {
+    final @NotNull Inventory MainMenu = Bukkit.createInventory(null, 54, MainMenuName);
+    for (final @NotNull RoutineTask RA : Main.ROUTINE_TASKS.values()) {
       MainMenu.addItem(ItemBuilder.createRoutineItemStack(RA));
     }
     return MainMenu;
   }
 
-  public static Inventory RoutineMenu(int ID) {
-    RoutineTask RA = Main.ROUTINE_TASKS.get(ID);
-    Inventory RoutineMenu = Bukkit.createInventory(null, 54, RoutineMenuNamePrefix + ID);
+  public static @NotNull Inventory RoutineMenu(final int ID) {
+    final RoutineTask RA = Main.ROUTINE_TASKS.get(ID);
+    final @NotNull Inventory RoutineMenu = Bukkit.createInventory(null, 54,
+        RoutineMenuNamePrefix + ID);
 
-    ItemStack Spacer = ItemBuilder.createSpacerGlassPane();
+    final @NotNull ItemStack Spacer = ItemBuilder.createSpacerGlassPane();
     RoutineMenu.setItem(27, Spacer);
     RoutineMenu.setItem(28, Spacer);
     RoutineMenu.setItem(29, Spacer);
@@ -37,8 +39,8 @@ public class Inventories {
     RoutineMenu.setItem(31, ItemBuilder.createDoneByBook());
 
     int FaceSlot = 36;
-    for (String PlayerName : RA.getDoneBy()) {
-      RoutineMenu.setItem(FaceSlot, PlayerName.equals("") ? ItemBuilder.createNoNameBarrier()
+    for (final @NotNull String PlayerName : RA.getDoneBy()) {
+      RoutineMenu.setItem(FaceSlot, PlayerName.isEmpty() ? ItemBuilder.createNoNameBarrier()
           : ItemBuilder.createPlayerHead(PlayerName, true));
       FaceSlot++;
     }
@@ -51,16 +53,17 @@ public class Inventories {
     return RoutineMenu;
   }
 
-  public static Inventory EditMenu(UUID EditSessionOwner) {
-    EditSession ES = Main.EDIT_SESSIONS.get(EditSessionOwner);
-    RoutineTask RA = Main.ROUTINE_TASKS.get(ES.getRoutineID());
-    Inventory EditMenu = Bukkit.createInventory(null, 54, EditMenuNamePrefix + RA.getID());
+  public static @NotNull Inventory EditMenu(final UUID EditSessionOwner) {
+    final EditSession ES = Main.EDIT_SESSIONS.get(EditSessionOwner);
+    final RoutineTask RA = Main.ROUTINE_TASKS.get(ES.getRoutineID());
+    final @NotNull Inventory EditMenu = Bukkit.createInventory(null, 54,
+        EditMenuNamePrefix + RA.getID());
 
     EditMenu.setItem(11, ItemBuilder.createNextDateClock(Util.convertDate(ES.getNextDate())));
     EditMenu.setItem(15, ItemBuilder.createCommentPaper(
         ES.getComment().equals("-") ? "Klicke um ein Kommentar hinzuzufügen" : ES.getComment()));
 
-    ItemStack Spacer = ItemBuilder.createSpacerGlassPane();
+    final @NotNull ItemStack Spacer = ItemBuilder.createSpacerGlassPane();
     EditMenu.setItem(27, Spacer);
     EditMenu.setItem(28, Spacer);
     EditMenu.setItem(29, Spacer);
@@ -72,16 +75,16 @@ public class Inventories {
     EditMenu.setItem(31, ItemBuilder.createWhoHelpedBook());
 
     int FaceSlot = 36;
-    for (String StafflerName : Main.staffler) {
+    for (final String StafflerName : Main.staffler) {
       EditMenu.setItem(FaceSlot,
           ItemBuilder.createPlayerHead(StafflerName, ES.getDoneBy().contains(StafflerName)));
       FaceSlot++;
     }
-    for (String Name : ES.getDoneBy()) {
+    for (final String Name : ES.getDoneBy()) {
       if (!Main.staffler.contains(Name)) {
-          if (FaceSlot > 50) {
-              break;
-          }
+        if (FaceSlot > 50) {
+          break;
+        }
         EditMenu.setItem(FaceSlot, ItemBuilder.createPlayerHead(Name, true));
         FaceSlot++;
       }
